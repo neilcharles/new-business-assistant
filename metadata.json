@@ -1,0 +1,5 @@
+{
+  "name": "New Business Assistant",
+  "description": "An AI-powered assistant to help write compelling emails to prospective clients by leveraging your documents, email context, and real-time web search for current marketing topics.",
+  "requestFramePermissions": []
+}
