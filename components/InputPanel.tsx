@@ -81,19 +81,17 @@ export const InputPanel: React.FC<InputPanelProps> = ({
         />
       </div>
 
-      {/* Tone Selector */}
+      {/* Tone Selector - Simplified for now as dynamic tones are in App.tsx */}
        <div className="flex flex-col space-y-2">
-        <label htmlFor="tone-select" className="font-medium text-slate-600 dark:text-slate-400">Tone of Voice</label>
-        <select
-            id="tone-select"
+        <label htmlFor="tone-input" className="font-medium text-slate-600 dark:text-slate-400">Tone of Voice</label>
+        <input
+            id="tone-input"
+            type="text"
             value={tone}
             onChange={(e) => setTone(e.target.value as EmailTone)}
             className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
-        >
-            {Object.values(EmailTone).map((t) => (
-                <option key={t} value={t}>{t}</option>
-            ))}
-        </select>
+            placeholder="Enter tone (e.g. Professional)"
+        />
       </div>
 
       {/* Optional Context */}
@@ -147,11 +145,11 @@ export const InputPanel: React.FC<InputPanelProps> = ({
       <button
         onClick={onGenerate}
         disabled={isLoading}
-        className="w-full flex items-center justify-center space-x-2 p-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+        className="w-full flex items-center justify-center space-x-2 p-4 bg-indigo-500 text-slate-900 font-bold rounded-lg shadow-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300 disabled:cursor-not-allowed transition duration-150 ease-in-out"
       >
         {isLoading ? (
           <>
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>

@@ -6,9 +6,10 @@ import { UserCircleIcon } from './icons/UserCircleIcon';
 interface HeaderProps {
     user: User | null;
     onLogout: () => void;
+    onOpenProfile: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
+export const Header: React.FC<HeaderProps> = ({ user, onLogout, onOpenProfile }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +44,15 @@ export const Header: React.FC<HeaderProps> = ({ user, onLogout }) => {
                 </button>
                 {menuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                         <button
+                            onClick={() => {
+                                onOpenProfile();
+                                setMenuOpen(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
+                        >
+                            Profile Settings
+                        </button>
                         <button
                             onClick={() => {
                                 onLogout();

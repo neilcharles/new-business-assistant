@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Source, EmailTone } from '../types';
+import { Source, EmailTone, ToneOption } from '../types';
 import { ClipboardIcon } from './icons/ClipboardIcon';
 import { LinkIcon } from './icons/LinkIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
@@ -11,7 +11,9 @@ interface OutputPanelProps {
   error: string | null;
   tone: EmailTone;
   setTone: (value: EmailTone) => void;
+  availableTones: ToneOption[];
   onGenerate: () => void;
+  onRefine: (instructions: string) => void;
 }
 
 const LoadingSkeleton: React.FC = () => (
@@ -31,9 +33,12 @@ export const OutputPanel: React.FC<OutputPanelProps> = ({
   error,
   tone,
   setTone,
+  availableTones,
   onGenerate,
+  onRefine,
 }) => {
     const [copyButtonText, setCopyButtonText] = useState('Copy');
+    const [refinementText, setRefinementText] = useState('');
 
     useEffect(() => {
         if (copyButtonText === 'Copied!') {
@@ -46,6 +51,15 @@ export const OutputPanel: React.FC<OutputPanelProps> = ({
         navigator.clipboard.writeText(generatedEmail);
         setCopyButtonText('Copied!');
     };
+    
+    const handleRefineClick = () => {
+        if (refinementText.trim()) {
+            onRefine(refinementText);
+            setRefinementText('');
+        }
+    };
+    
+    const currentDescription = availableTones.find(t => t.tone === tone)?.description;
 
   return (
     <div className="bg-white dark:bg-slate-800/50 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 flex flex-col space-y-6">
@@ -58,19 +72,26 @@ export const OutputPanel: React.FC<OutputPanelProps> = ({
                     onChange={(e) => setTone(e.target.value as EmailTone)}
                     className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
                 >
-                    {Object.values(EmailTone).map((t) => (
-                        <option key={t} value={t}>{t}</option>
+                    {availableTones.map((t) => (
+                        <option key={t.tone} value={t.tone}>{t.tone}</option>
                     ))}
                 </select>
+                {currentDescription && (
+                    <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                         <p className="text-sm text-slate-600 dark:text-slate-400 italic">
+                            {currentDescription}
+                         </p>
+                    </div>
+                )}
             </div>
             <button
                 onClick={onGenerate}
                 disabled={isLoading}
-                className="w-full flex items-center justify-center space-x-2 p-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+                className="w-full flex items-center justify-center space-x-2 p-3 bg-indigo-500 text-slate-900 font-bold rounded-lg shadow-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300 disabled:cursor-not-allowed transition duration-150 ease-in-out"
             >
                 {isLoading ? (
                 <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -93,7 +114,7 @@ export const OutputPanel: React.FC<OutputPanelProps> = ({
                 {generatedEmail && !isLoading && (
                     <button
                         onClick={handleCopy}
-                        className="flex items-center space-x-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition"
+                        className="flex items-center space-x-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
                     >
                         <ClipboardIcon className="w-4 h-4" />
                         <span>{copyButtonText}</span>
@@ -121,7 +142,7 @@ export const OutputPanel: React.FC<OutputPanelProps> = ({
                                     href={source.uri}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline truncate"
+                                    className="text-sm text-slate-700 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-indigo-400 underline decoration-indigo-500 truncate"
                                     title={source.uri}
                                 >
                                     {source.title}
@@ -132,6 +153,36 @@ export const OutputPanel: React.FC<OutputPanelProps> = ({
                 </div>
             )}
         </div>
+        
+        {generatedEmail && !isLoading && !error && (
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col space-y-3">
+                <label htmlFor="refinement-input" className="font-medium text-slate-600 dark:text-slate-400">Refine this email</label>
+                <div className="flex flex-col md:flex-row gap-3">
+                    <input
+                        id="refinement-input"
+                        type="text"
+                        value={refinementText}
+                        onChange={(e) => setRefinementText(e.target.value)}
+                        placeholder="e.g. Make it shorter, Add more emphasis on ROI, Make it more casual..."
+                        className="flex-grow p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                handleRefineClick();
+                            }
+                        }}
+                    />
+                    <button
+                        onClick={handleRefineClick}
+                        disabled={!refinementText.trim()}
+                        className="flex items-center justify-center space-x-2 px-6 py-3 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                    >
+                        <SparklesIcon className="w-5 h-5" />
+                        <span>Regenerate</span>
+                    </button>
+                </div>
+            </div>
+        )}
     </div>
   );
 };

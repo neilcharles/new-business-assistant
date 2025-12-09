@@ -6,6 +6,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New Business Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'media',
+        theme: {
+          extend: {
+            colors: {
+              // Primary Brand: BAMM Yellow
+              indigo: {
+                50: '#fffbeb',
+                100: '#fef3c7',
+                200: '#fde68a',
+                300: '#fcd34d',
+                400: '#fbbf24',
+                500: '#FFCD00', // Main Brand Yellow
+                600: '#e5b800', // Hover Yellow
+                700: '#b45309',
+                800: '#92400e',
+                900: '#78350f',
+                950: '#451a03',
+              },
+              // Base: BAMM Dark Slate/Charcoal Blue
+              slate: {
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                200: '#e2e8f0',
+                300: '#cbd5e1',
+                400: '#94a3b8',
+                500: '#64748b',
+                600: '#475569',
+                700: '#334155',
+                800: '#242E39', // BAMM Document Dark Background
+                900: '#1A2129', // Deepest
+                950: '#0f172a',
+              }
+            }
+          }
+        }
+      }
+    </script>
   <script type="importmap">
 {
   "imports": {
@@ -17,7 +56,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 dark:bg-slate-900">
+  <body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
